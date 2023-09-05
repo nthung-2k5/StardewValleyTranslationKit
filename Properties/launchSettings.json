@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SVTranslation": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Stardew Valley\\3.1\" \"D:\\Stardew Valley\\ENG-3.5\""
+    },
+    "JsonToCsv": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Stardew Valley\\3.1\" \"D:\\Stardew Valley\\ENG-3.5\""
+    }
+  }
+}
