@@ -7,6 +7,10 @@
     "JsonToCsv": {
       "commandName": "Project",
       "commandLineArgs": "\"D:\\Stardew Valley\\3.1\" \"D:\\Stardew Valley\\ENG-3.5\""
+    },
+    "Import": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Stardew Valley\\ENG-3.5\""
     }
   }
 }

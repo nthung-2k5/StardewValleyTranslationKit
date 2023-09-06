@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StardewValley;
+using StardewValley.Class;
 using StardewValley.Class.Concessions;
 using StardewValley.Class.Movies;
 using StardewValley.Class.MoviesReactions;
@@ -12,7 +13,7 @@ using static StardewValley.Messages;
 namespace SVTranslation.Process.Import;
 public class StardewUpdate: BaseImportProcess
 {
-    public StardewUpdate(string folder, Func<string, BaseFormat> getImportFormat, string export = null) : base(folder, export) => GetImportFormat = getImportFormat;
+    public StardewUpdate(string folder, string export = null) : base(folder, export) { }
 
     public override void Import(string language = "es-ES")
     {
@@ -27,8 +28,11 @@ public class StardewUpdate: BaseImportProcess
     {
         JObject json = GetLanguageDataNoFile(Folder, @base, language);
         JToken content = json["content"];
-        ImportType(content, modContent, IsClass(json));
-        using var outputJson = File.Create(Path.Combine(ExportFolder, $"{@base}.{language}.json"));
+
+        ImportType(content, modContent, IsClass(@base));
+        var file = Path.Combine(ExportFolder, $"{@base}.{language}.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(file));
+        using var outputJson = File.Create(file);
         Write(outputJson, json);
     }
     protected static void Write(FileStream file, JObject content)
@@ -56,7 +60,7 @@ public class StardewUpdate: BaseImportProcess
         {
             foreach (var (k, v) in mod)
             {
-                content[k].Replace((v is JArray messArr) ? content[k].ToObject<string>().ApplyMessages(messArr.Cast<string>().ToArray()) : v);
+                content[k].Replace((v is JArray messArr) ? content[k].Value<string>().ApplyMessages(messArr.ToObject<string[]>()) : v);
             }
         }
         else if (content is JArray && modContent is JArray modArr)
@@ -66,27 +70,19 @@ public class StardewUpdate: BaseImportProcess
         }
     }
 
-    protected override void ImportClass(JToken content, JToken modContent)
+    protected override void ImportClass(JToken content, JToken modContent, ClassEnum @class)
     {
-        //Type @class;
-        //if (filename.EndsWith(nameof(Concessions)))
-        //{
-        //    @class = typeof(Concessions);
-        //}
-        //else if (filename.EndsWith(nameof(MoviesReactions)))
-        //{
-        //    @class = typeof(MoviesReactions);
-        //}
-        //else if (filename.EndsWith(nameof(Movies)))
-        //{
-        //    @class = typeof(Movies);
-        //}
-        //else
-        //    throw new NotSupportedException("Class not found in 1.5");
+        Type type = @class switch
+        {
+            ClassEnum.Concessions => typeof(Concessions),
+            ClassEnum.MoviesReactions => typeof(MoviesReactions),
+            ClassEnum.Movies => typeof(Movies),
+            _ => throw new NotSupportedException("Class not found in 1.5"),
+        };
 
-        //LogJson[filename] = (JToken)@class.GetMethod("Apply").Invoke(null, new object[] { referenceContent });
+        type.GetMethod("Apply").Invoke(null, new object[] { content, modContent });
     }
 
     public JObject ModContent { get; set; }
-    protected Func<string, BaseFormat> GetImportFormat { get; set; }
+    public required Func<string, BaseFormat> GetImportFormat { get; set; }
 }

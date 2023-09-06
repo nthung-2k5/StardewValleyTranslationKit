@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StardewValley;
+using StardewValley.Class;
 using StardewValley.Class.Concessions;
 using StardewValley.Class.Movies;
 using StardewValley.Class.MoviesReactions;
@@ -34,7 +35,7 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
 
         JToken referenceJson = UseReference ? GetLanguageDataNoFile(NewFolder, @base).content : newContent;
 
-        ExportType(@base, oldContent, newContent, referenceJson, IsClass(newJson));
+        ExportType(@base, oldContent, newContent, referenceJson, IsClass(@base));
     }
     public void Write()
     {
@@ -86,25 +87,17 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
         }
     }
 
-    protected override void ExportClass(string filename, JToken referenceContent)
+    protected override void ExportClass(string filename, JToken referenceContent, ClassEnum @class)
     {
-        Type @class;
-        if (filename.EndsWith(nameof(Concessions)))
+        Type type = @class switch
         {
-            @class = typeof(Concessions);
-        }
-        else if (filename.EndsWith(nameof(MoviesReactions)))
-        {
-            @class = typeof(MoviesReactions);
-        }
-        else if (filename.EndsWith(nameof(Movies)))
-        {
-            @class = typeof(Movies);
-        }
-        else
-            throw new NotSupportedException("Class not found in 1.5");
+            ClassEnum.Concessions => typeof(Concessions),
+            ClassEnum.MoviesReactions => typeof(MoviesReactions),
+            ClassEnum.Movies => typeof(Movies),
+            _ => throw new NotSupportedException("Class not found in 1.5"),
+        };
 
-        LogJson[filename] = (JToken)@class.GetMethod("Generate").Invoke(null, new object[] { referenceContent });
+        LogJson[filename] = (JToken)type.GetMethod("Generate").Invoke(null, new object[] { referenceContent });
     }
 
     public JObject LogJson { get; set; } = new();

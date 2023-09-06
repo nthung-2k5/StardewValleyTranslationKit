@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StardewValley;
+using StardewValley.Class;
 using StardewValley.Formats;
 using SVTranslation.Formats;
 using static StardewValley.JsonHelper;
@@ -28,7 +29,7 @@ public class StardewSync : BaseExportProcess, IExportSingle
 
         JToken referenceJson = GetLanguageDataNoFile(NewFolder, @base).content;
 
-        ExportType(@base, oldContent, newContent, referenceJson, IsClass(newJson));
+        ExportType(@base, oldContent, newContent, referenceJson, IsClass(@base));
 
         Write(newFile, newJson);
     }
@@ -70,7 +71,7 @@ public class StardewSync : BaseExportProcess, IExportSingle
 #endif
     }
 
-    protected override void ExportClass(string filename, JToken referenceContent)
+    protected override void ExportClass(string filename, JToken referenceContent, ClassEnum @class)
     {
 #if SV_1_6
 #endif

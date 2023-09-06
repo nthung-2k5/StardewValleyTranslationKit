@@ -6,18 +6,14 @@ public record Scene(int Image, string Music, string Sound, int MessageDelay, str
 {
     public static void Apply(JToken content, JToken mod)
     {
-        var arr = content as JArray;
-        for (int i = 0; i < arr.Count; i++)
+        var modObj = mod as JObject;
+        if (modObj.ContainsKey(nameof(Text)))
         {
-            var obj = content[i] as JObject;
-            if (obj.ContainsKey(nameof(Text)))
-            {
-                obj[nameof(Text)].Replace(mod[i][nameof(Text)]);
-            }
-            if (obj.ContainsKey(nameof(Script)))
-            {
-                obj[nameof(Script)].Replace(obj[nameof(Script)].ToObject<string>().ApplyMessages(mod[i][nameof(Script)].Cast<string>().ToArray()));
-            }
+            content[nameof(Text)].Replace(modObj[nameof(Text)]);
+        }
+        if (modObj.ContainsKey(nameof(Script)))
+        {
+            content[nameof(Script)].Replace(content[nameof(Script)].ApplyMessagesDynamic(mod[nameof(Script)]));
         }
     }
 

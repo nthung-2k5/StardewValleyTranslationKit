@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using StardewValley.Class;
 using System.Text.RegularExpressions;
 
 namespace StardewValley;
@@ -31,9 +32,24 @@ public static partial class JsonHelper
         return (JObject.Parse(reader.ReadToEnd()), file);
     }
 
-    public static bool IsClass(JObject json)
+    public static ClassEnum? IsClass(string @base)
     {
-        return json["readers"].Any(x => x["type"].ToObject<string>().Contains("ReflectiveReader"));
+        if (@base.EndsWith("Concessions"))
+        {
+            return ClassEnum.Concessions;
+        }
+        else if (@base.EndsWith("MoviesReactions"))
+        {
+            return ClassEnum.MoviesReactions;
+        }
+        else if (@base.EndsWith("Movies"))
+        {
+            return ClassEnum.Movies;
+        }
+        else
+        {
+            return null;
+        }
     }
     public static void AddTokenByPath(this JToken jToken, string path, object value)
     {
@@ -77,7 +93,7 @@ public static partial class JsonHelper
             {
                 //get real prop name (convert "['prop']" to "prop")
                 var name = pathPart.Trim('[', ']', '\'');
-                ((JObject)node).Add(name, jToken);
+                ((JObject)node).Add(Regex.Unescape(name), jToken);
             }
             else if (node.Type == JTokenType.Array)
             {

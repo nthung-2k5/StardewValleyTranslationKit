@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace StardewValley;
 public static partial class Messages
@@ -14,7 +15,14 @@ public static partial class Messages
     public static dynamic GetMessagesDynamic(this string script)
     {
         var mess = GetMessages(script);
-        return mess.Any() ? mess : script;
+        if (mess.Any())
+        {
+            return mess;
+        }    
+        else
+        {
+            return string.IsNullOrEmpty(script) ? null : script;
+        }
     }
 
     public static string ApplyMessages(this string script, string[] messages)
@@ -23,7 +31,20 @@ public static partial class Messages
         return regex.Replace(script, (Match match) =>
         {
             i++;
-            return messages[i - 1];
+            return " \"" + messages[i - 1] + "\"";
         });
+    }
+    public static string ApplyMessages(this JToken script, JToken messages)
+        => script.Value<string>().ApplyMessages(messages.ToObject<string[]>());
+    public static string ApplyMessagesDynamic(this JToken script, JToken messages)
+    {
+        if (messages is JArray arr)
+        {
+            return ApplyMessages(script, arr);
+        }    
+        else
+        {
+            return messages.ToObject<string>();
+        }    
     }
 }

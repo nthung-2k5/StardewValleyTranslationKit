@@ -6,7 +6,18 @@ public record SpecialResponses(SpecialResponse BeforeMovie, SpecialResponse Duri
 {
     public static void Apply(JToken content, JToken mod)
     {
-        throw new NotImplementedException();
+        if (mod["BeforeMovie"] != null)
+        {
+            SpecialResponse.Apply(content["SpecialResponses"]["BeforeMovie"], mod["BeforeMovie"]);
+        }
+        if (mod["DuringMovie"] != null)
+        {
+            SpecialResponse.Apply(content["SpecialResponses"]["DuringMovie"], mod["DuringMovie"]);
+        }
+        if (mod["AfterMovie"] != null)
+        {
+            SpecialResponse.Apply(content["SpecialResponses"]["AfterMovie"], mod["AfterMovie"]);
+        }
     }
 
     public JObject Convert()

@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using Newtonsoft.Json.Linq;
 using SVTranslation.Formats;
+using System.Text.RegularExpressions;
 
 namespace StardewValley.Formats;
 public class CsvFormat : BaseFormat, IJsonConvertible
@@ -111,6 +112,6 @@ public class CsvFormat : BaseFormat, IJsonConvertible
 }
 public record TranslationLine(string Key, string Text, string Context, string Translated = "")
 {
-    public string GetTranslation() => string.IsNullOrEmpty(Translated) ? Translated : Text;
+    public string GetTranslation() => !string.IsNullOrEmpty(Translated) ? Translated : Text;
 }
 public record LanguageContext(string Language, JToken Context);

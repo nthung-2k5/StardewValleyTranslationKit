@@ -6,7 +6,15 @@ public record SpecialResponse(string ResponsePoint, string Script, string Text) 
 {
     public static void Apply(JToken content, JToken mod)
     {
-        throw new NotImplementedException();
+        var obj = content as JObject;
+        if (obj.ContainsKey("Text"))
+        {
+            content["Text"].Replace(obj["Text"]);
+        }
+        if (obj.ContainsKey("Script"))
+        {
+            content["Text"].Replace(content["Text"].ApplyMessagesDynamic(obj["Script"]));
+        }    
     }
 
     public JObject Convert() => JObject.FromObject(new { Script = Script.GetMessagesDynamic(), Text });
