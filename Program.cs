@@ -27,17 +27,23 @@ JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 //            select Path.GetRelativePath(GlobalPath.NewVersion, file.Replace(".es-ES.json", null));
 
 // export
-//var jp = new NewContentTranslator(args[0], args[1], false, false);
-//jp.Export("ja-JP");
+var jp = new NewContentTranslator(args[0], args[1], false, false);
+jp.Export("ja-JP");
 
-//var chingchong = new NewContentTranslator(args[0], args[1], false, false);
-//chingchong.Export("zh-CN");
+var chingchong = new NewContentTranslator(args[0], args[1], false, false);
+chingchong.Export("zh-CN");
 
-//var eng = new NewContentTranslator(args[0], args[1], true, true, (folder, json) => new CsvFormat(folder, json, new("Japanese", jp.LogJson), new("Chinese", chingchong.LogJson)));
-//eng.Export();
+var vn = new NewContentTranslator(args[0], args[1], false, false);
+vn.Export("es-ES");
 
-var import = new StardewUpdate(args[0], args[0] + "_test")
-{
-    GetImportFormat = (folder) => new CsvFormat(folder, new())
-};
-import.Import();
+var eng = new NewContentTranslator(args[0], args[1], true, true, (folder, json) => new CsvFormat(folder, json, new("Japanese", jp.LogJson), new("Chinese", chingchong.LogJson), new("VN", vn.LogJson)));
+eng.Export();
+
+//var sync = new StardewSync(args[0], args[1]);
+//sync.Export();
+
+//var import = new StardewUpdate(args[0], args[0] + "_test")
+//{
+//    GetImportFormat = (folder) => new CsvFormat(folder, new())
+//};
+//import.Import();

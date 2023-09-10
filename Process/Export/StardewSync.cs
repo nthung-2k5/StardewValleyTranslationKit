@@ -17,7 +17,7 @@ public class StardewSync : BaseExportProcess, IExportSingle
     {
         foreach (var file in Directory.EnumerateFiles(NewFolder, "*.es-ES.json", SearchOption.AllDirectories))
         {
-            Export(Path.GetRelativePath(NewFolder, file.Replace(".es-ES.json", null)));
+            ExportSingle(Path.GetRelativePath(NewFolder, file.Replace(".es-ES.json", null)));
         }
     }
     public override void ExportSingle(string @base, string language = "es-ES")

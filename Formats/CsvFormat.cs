@@ -37,7 +37,15 @@ public class CsvFormat : BaseFormat, IJsonConvertible
         {
             using var file = File.OpenRead(csv);
             using var reader = new CsvReader(new StreamReader(file), System.Globalization.CultureInfo.InvariantCulture);
-            Lines.AddRange(reader.GetRecords<TranslationLine>());
+            try
+            {
+                Lines.AddRange(reader.GetRecords<LegacyTranslationLine>());
+            }    
+            catch
+            {
+                Lines.AddRange(reader.GetRecords<TranslationLine>());
+            }
+            
         }
         ToJson();
     }
@@ -50,10 +58,10 @@ public class CsvFormat : BaseFormat, IJsonConvertible
             {
                 IEnumerable<string> contextStrings = from context in Contexts
                                                      let path = context.Context.SelectToken(reader.Path)
-                                                     where path is not null
+                                                     where path is not null && context.Language != "VN"
                                                      select $"{context.Language}: {path}";
 
-                Lines.Add(new(reader.Path, reader.Value.ToString(), string.Join('\n', contextStrings)));
+                Lines.Add(new(reader.Path, reader.Value.ToString(), string.Join('\n', contextStrings), Contexts.Last().Context.SelectToken(reader.Path).ToObject<string>()));
             }
         }
     }
@@ -62,7 +70,15 @@ public class CsvFormat : BaseFormat, IJsonConvertible
     {
         foreach (var line in Lines)
         {
-            Content.AddTokenByPath(line.Key, line.GetTranslation());
+            if (line is LegacyTranslationLine legacy)
+            {
+                legacy = legacy with { Key = $"['{legacy.File.Replace("\\", "\\\\")}']{ (!legacy.Key.StartsWith("[") ? "['" : string.Empty) }{legacy.Key.Replace("'", "\\'")}{(!legacy.Key.StartsWith("[") ? "']" : string.Empty)}" };
+                Content.AddTokenByPath(legacy.Key, legacy.GetTranslation());
+            }   
+            else
+            {
+                Content.AddTokenByPath(line.Key, line.GetTranslation());
+            }    
             //var token = Content.SelectToken(line.Key);
             //token.Replace(line.GetTranslation());
         }    
@@ -114,4 +130,5 @@ public record TranslationLine(string Key, string Text, string Context, string Tr
 {
     public string GetTranslation() => !string.IsNullOrEmpty(Translated) ? Translated : Text;
 }
+public record LegacyTranslationLine(string File, string Key, string Text, string Context, string Translated = ""): TranslationLine(Key, Text, Context, Translated);  
 public record LanguageContext(string Language, JToken Context);
