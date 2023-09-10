@@ -6,14 +6,14 @@ public record SpecialResponse(string ResponsePoint, string Script, string Text) 
 {
     public static void Apply(JToken content, JToken mod)
     {
-        var obj = content as JObject;
+        var obj = mod as JObject;
         if (obj.ContainsKey("Text"))
         {
             content["Text"].Replace(obj["Text"]);
         }
         if (obj.ContainsKey("Script"))
         {
-            content["Text"].Replace(content["Text"].ApplyMessagesDynamic(obj["Script"]));
+            content["Script"].Replace(content["Script"].ApplyMessagesDynamic(obj["Script"]));
         }    
     }
 
