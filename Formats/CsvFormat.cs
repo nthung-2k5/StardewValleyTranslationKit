@@ -4,7 +4,7 @@ using SVTranslation.Formats;
 using System.Text.RegularExpressions;
 
 namespace StardewValley.Formats;
-public class CsvFormat : BaseFormat, IJsonConvertible
+public class CsvFormat : IFormat, IJsonConvertible
 {
     public CsvFormat(string path, JObject json, params LanguageContext[] contexts) : base(path, json) => Contexts = contexts;
     public List<TranslationLine> Lines { get; set; } = new();

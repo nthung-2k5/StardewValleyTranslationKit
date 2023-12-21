@@ -6,7 +6,10 @@ using StardewValley.Class.Concessions;
 using StardewValley.Class.Movies;
 using StardewValley.Class.MoviesReactions;
 using StardewValley.Formats;
+using SVTranslation.Helper;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using static StardewValley.JsonHelper;
 
 namespace SVTranslation.Process.Export;
@@ -14,9 +17,10 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
 {
     public override void Export(string language = "es-ES")
     {
-        foreach (var file in Directory.EnumerateFiles(NewFolder, "*.es-ES.json", SearchOption.AllDirectories))
+        var files = new HashSet<string>(Directory.EnumerateFiles(NewFolder, "*", SearchOption.AllDirectories).Select(PathHelper.GetFileNameWithoutExtension));
+        foreach (var file in files)
         {
-            ExportSingle(Path.GetRelativePath(NewFolder, file.Replace(".es-ES.json", null)), language);
+            ExportSingle(Path.GetFileName(file), language);
         }
         if (WriteNewContent)
         {
@@ -42,7 +46,7 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
         var exporter = GetExportFormat(NewFolder, LogJson);
         exporter.Export();
     }
-    public NewContentTranslator(string old, string @new, bool writeContent, bool reference, Func<string, JObject, BaseFormat> getExportFormat = null, bool logConsole = false) : base(old, @new)
+    public NewContentTranslator(string old, string @new, bool writeContent, bool reference, Func<string, JsonObject, IFormat> getExportFormat = null, bool logConsole = false) : base(old, @new)
     {
         WriteNewContent = writeContent;
         UseReference = reference;
@@ -55,12 +59,12 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
         }    
     }
 
-    protected override void ExportPrimitive(string filename, JToken oldContent, JToken newContent, JToken referenceContent)
+    protected override void ExportPrimitive(string filename, JsonElement? oldContent, JsonElement newContent, JsonElement? referenceContent)
     {
         var reference = referenceContent ?? newContent;
-        if (newContent is JObject newDict)
+        if (newContent.ValueKind == JsonValueKind.Object)
         {
-            foreach (var (k, _) in newDict)
+            foreach (var kv in newContent.EnumerateObject())
             {
                 if (oldContent is null || !(oldContent as JObject).ContainsKey(k))
                 {
@@ -74,20 +78,20 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
                 }
             }
         }
-        else if (newContent is JArray && reference is JArray referenceArr)
+        else if (newContent.ValueKind == JsonValueKind.Array && reference.ValueKind == JsonValueKind.Array)
         {
             LogJson[filename] = reference;
             if (PrintNewContent)
             {
-                foreach (var text in referenceArr.ToObject<string[]>())
+                foreach (var text in reference.EnumerateArray())
                 {
-                    AlertNewText(filename, text);
+                    AlertNewText(filename, text.GetString());
                 }
             }
         }
     }
 
-    protected override void ExportClass(string filename, JToken referenceContent, ClassEnum @class)
+    protected override void ExportClass(string filename, JsonElement referenceContent, ClassEnum @class)
     {
         Type type = @class switch
         {
@@ -97,10 +101,10 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
             _ => throw new NotSupportedException("Class not found in 1.5"),
         };
 
-        LogJson[filename] = (JToken)type.GetMethod("Generate").Invoke(null, new object[] { referenceContent });
+        LogJson[filename] = (JsonNode)type.GetMethod("Generate").Invoke(null, new object[] { referenceContent });
     }
 
-    public JObject LogJson { get; set; } = new();
+    public JsonObject LogJson { get; set; } = new();
     public static void AlertNewText(string filename, string value, string key = null)
     {
         Console.WriteLine("New content found in file: {0}", filename);
@@ -115,5 +119,5 @@ public class NewContentTranslator : BaseExportProcess, IExportMulti
     public bool WriteNewContent { get; set; }
     public bool PrintNewContent { get; set; }
     public bool UseReference { get; set; }
-    protected Func<string, JObject, BaseFormat> GetExportFormat { get; set; }
+    protected Func<string, JsonObject, IFormat> GetExportFormat { get; set; }
 }

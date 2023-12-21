@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using StardewValley.Formats;
 
 namespace SVTranslation.Formats;
-internal class JsonFormat : BaseFormat, IDisposable
+internal class JsonFormat : IFormat, IDisposable
 {
     private bool disposedValue;
 

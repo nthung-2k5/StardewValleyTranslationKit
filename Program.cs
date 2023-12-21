@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using StardewValley.Formats;
 using SVTranslation.Process.Export;
 using SVTranslation.Process.Import;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 //GlobalPath.OldVersion = args[0];
 //GlobalPath.NewVersion = args[1];
@@ -15,9 +15,9 @@ using SVTranslation.Process.Import;
 //}
 //trans.WriteJson();
 
-JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+JsonSerializerOptions options = new()
 {
-    NullValueHandling = NullValueHandling.Include,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 };
 
 //GlobalPath.OldVersion = args[0];

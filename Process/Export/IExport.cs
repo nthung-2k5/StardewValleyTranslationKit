@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SVTranslation.Process.Export;
 public interface IExportSingle
 {
-    void Write(FileStream fs, JObject json);
+    void Write(FileStream fs, JsonElement json);
 }
 public interface IExportMulti
 {

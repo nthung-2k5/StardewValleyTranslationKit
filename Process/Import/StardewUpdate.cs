@@ -84,5 +84,5 @@ public class StardewUpdate: BaseImportProcess
     }
 
     public JObject ModContent { get; set; }
-    public required Func<string, BaseFormat> GetImportFormat { get; set; }
+    public required Func<string, IFormat> GetImportFormat { get; set; }
 }
