@@ -1,15 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Text.Json;
 
 namespace StardewValley.Formats;
-public abstract class BaseFormat
+public interface IFormat
 {
-    protected BaseFormat(string path, JObject content)
-    {
-        FormatPath = path;
-        Content = content;
-    }
     public string FormatPath { get; set; }
-    public JObject Content { get; set; }
+    public JsonElement Content { get; set; }
     public abstract void Export();
     public abstract void Import();
 }
