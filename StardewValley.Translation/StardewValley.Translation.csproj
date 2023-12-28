@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="JsonClass\MoviesReactions\**" />
+    <Compile Remove="JsonClass\Movies\**" />
+    <Compile Remove="Process\**" />
+    <EmbeddedResource Remove="JsonClass\MoviesReactions\**" />
+    <EmbeddedResource Remove="JsonClass\Movies\**" />
+    <EmbeddedResource Remove="Process\**" />
+    <None Remove="JsonClass\MoviesReactions\**" />
+    <None Remove="JsonClass\Movies\**" />
+    <None Remove="Process\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Formats\CsvFormat.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="JsonPatch.Net" Version="2.1.0" />
+    <PackageReference Include="JsonPointer.Net" Version="3.3.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StardewValley.Translation.JsonClass\StardewValley.Translation.JsonClass.csproj" />
+    <ProjectReference Include="..\StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="StardewValley.GameData">
+      <HintPath>..\..\..\TeraBoxDownload\Stardew Valley\StardewValley.GameData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
