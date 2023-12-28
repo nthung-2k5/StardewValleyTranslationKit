@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVTranslation", "SVTranslation.csproj", "{9EF08F9E-7185-4D55-8819-024B316D615B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation", "StardewValley.Translation\StardewValley.Translation.csproj", "{F1285AE6-6667-4A05-82FA-B8AD08A22DB5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation.JsonClass", "StardewValley.Translation.JsonClass\StardewValley.Translation.JsonClass.csproj", "{F05124F5-DF44-4A5A-AFCE-2252D431C239}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation.SourceGenerator", "StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj", "{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9EF08F9E-7185-4D55-8819-024B316D615B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EF08F9E-7185-4D55-8819-024B316D615B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EF08F9E-7185-4D55-8819-024B316D615B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EF08F9E-7185-4D55-8819-024B316D615B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1285AE6-6667-4A05-82FA-B8AD08A22DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1285AE6-6667-4A05-82FA-B8AD08A22DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1285AE6-6667-4A05-82FA-B8AD08A22DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1285AE6-6667-4A05-82FA-B8AD08A22DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
