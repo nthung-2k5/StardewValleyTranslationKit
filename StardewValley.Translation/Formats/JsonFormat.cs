@@ -1,15 +1,17 @@
-﻿using StardewValley.Formats;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
-namespace SVTranslation.Formats;
-public class JsonFormat(JsonNode? content = null, FormatMode? mode = null) : BaseFormat(content, mode)
+namespace StardewValley.Translation.Formats;
+public partial class JsonFormat: BaseFormat, IJsonFormat
 {
-    public override void Export(FileStream stream)
+    protected override void Export(FileStream stream)
     {
-        using Utf8JsonWriter writer = new(stream, new() { Indented = true });
+        using Utf8JsonWriter writer = new(stream, new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, Indented = true });
         Content!.WriteTo(writer);
     }
 
-    public override void Import(FileStream stream) => content = JsonNode.Parse(stream);
+    protected override void Import(FileStream stream) => Content = JsonNode.Parse(stream);
 }

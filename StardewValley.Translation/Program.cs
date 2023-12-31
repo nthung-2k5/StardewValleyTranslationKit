@@ -1,26 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using StardewValley.Formats;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using StardewValley.Translation.Formats;
+using StardewValley.Translation.Process;
 
-//GlobalPath.OldVersion = args[0];
-//GlobalPath.NewVersion = args[1];
-
-//var trans = new NewContentTranslator(false);
-//foreach (var file in Directory.GetFiles(GlobalPath.NewVersion, "*.es-ES.json", SearchOption.AllDirectories))
-//{
-//    trans.Process(Path.GetRelativePath(GlobalPath.NewVersion, file.Replace(".es-ES.json", null)));
-//}
-//trans.WriteJson();
-
-JsonSerializerOptions options = new()
-{
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-};
-
-//GlobalPath.OldVersion = args[0];
-//GlobalPath.NewVersion = args[1];
-
+var trans = new ExtractTranslation(args[0], args[1], new JsonFormat(), fullExport: true);
+trans.Process();
+//Console.WriteLine("Hello world");
 //var files = from file in Directory.GetFiles(GlobalPath.NewVersion, "*.es-ES.json", SearchOption.AllDirectories)
 //            select Path.GetRelativePath(GlobalPath.NewVersion, file.Replace(".es-ES.json", null));
 

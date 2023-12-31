@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StardewValley.Translation.SourceGenerator;
+﻿namespace StardewValley.Translation.SourceGenerator;
 internal static class SourceCodeHelper
 {
     public static string ClassTranslation(IEnumerable<(string Type, string BaseType)> types) =>
 $$"""
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 namespace StardewValley.Translation.JsonClass;
 
 public static partial class ClassTranslation
 {
+    private static JsonSerializerOptions IgnoreNullSerializerOptions = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     public static JsonNode Convert(JsonNode node, string type)
     {
         return type switch
@@ -40,7 +38,7 @@ public static partial class ClassTranslation
             var cls = new T();
             cls.Read(item);
 
-            converted.Add(JsonSerializer.SerializeToNode(cls));
+            converted.Add(JsonSerializer.SerializeToNode(cls, IgnoreNullSerializerOptions));
         }
         return converted;
     }
@@ -53,7 +51,7 @@ public static partial class ClassTranslation
             var cls = new T();
             cls.Read(v);
 
-            converted.Add(k, JsonSerializer.SerializeToNode(cls));
+            converted.Add(k, JsonSerializer.SerializeToNode(cls, IgnoreNullSerializerOptions));
         }
         return converted;
     }
@@ -65,5 +63,5 @@ public static partial class ClassTranslation
         return Extensions.GetResource(item.ClassSyntax, parent => $$"""partial {{parent.Keyword}} {{parent.Name}} {{parent.Constraints}}: StardewValley.Translation.JsonClass.BaseJsonClass<{{item.BaseType}}> { }""");
     }
 
-    private static string NewLine(char newline, int indent) => newline + '\n' + new string(' ', indent * 4);
+    private static string NewLine(char newline, int indent) => new string([newline, '\n']) + new string(' ', indent * 4);
 }

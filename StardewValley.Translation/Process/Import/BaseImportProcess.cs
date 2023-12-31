@@ -1,11 +1,4 @@
-﻿using StardewValley.JsonClass;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SVTranslation.Process.Import;
+﻿namespace StardewValley.Translation.Process.Import;
 public abstract class BaseImportProcess
 {
     protected BaseImportProcess(string folder, string export = null) => (Folder, ExportFolder) = (folder, export ?? folder);

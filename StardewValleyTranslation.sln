@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation.JsonClass", "StardewValley.Translation.JsonClass\StardewValley.Translation.JsonClass.csproj", "{F05124F5-DF44-4A5A-AFCE-2252D431C239}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StardewValley.Translation.SourceGenerator", "StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj", "{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StardewValley.Translation.SourceGenerator", "StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj", "{CF5B69AB-4505-448C-BF0D-FE3A468D1D7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F05124F5-DF44-4A5A-AFCE-2252D431C239}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8880CAD6-3A90-4470-8CFF-7ACE21A853A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF5B69AB-4505-448C-BF0D-FE3A468D1D7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF5B69AB-4505-448C-BF0D-FE3A468D1D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF5B69AB-4505-448C-BF0D-FE3A468D1D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF5B69AB-4505-448C-BF0D-FE3A468D1D7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

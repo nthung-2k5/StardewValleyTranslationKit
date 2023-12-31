@@ -1,16 +1,6 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using StardewValley;
-using StardewValley.JsonClass;
-using StardewValley.JsonClass.Concessions;
-using StardewValley.JsonClass.Movies;
-using StardewValley.JsonClass.MoviesReactions;
-using StardewValley.Formats;
-using System.Security.Cryptography;
-using static StardewValley.JsonHelper;
-using static StardewValley.Messages;
+﻿using static StardewValley.Translation.JsonHelper;
 
-namespace SVTranslation.Process.Import;
+namespace StardewValley.Translation.Process.Import;
 public class StardewUpdate: BaseImportProcess
 {
     public StardewUpdate(string folder, string export = null) : base(folder, export) { }

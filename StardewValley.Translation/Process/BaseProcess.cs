@@ -1,41 +1,47 @@
-﻿using StardewValley.JsonClass;
-using SVTranslation.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
+using StardewValley.Translation.Helper;
+using static StardewValley.Translation.Helper.JsonFileHelper;
 
-namespace SVTranslation.Process;
-public abstract class BaseProcess
+namespace StardewValley.Translation.Process;
+public abstract class BaseProcess<T>(string folder) where T: ProcessContext
 {
-    public string Language { get; init; } = "es-ES";
-    public const string ReferenceLanguage = ""; // English
-    protected BaseProcess(string old, string @new) => (OldFolder, NewFolder) = (old, @new);
-    public abstract void Process();
-    public abstract void ProcessFile(string @base);
-    protected void ProcessType(string filename, JsonNode? oldContent, JsonNode newContent, JsonNode referenceContent, ClassEnum? @class = null)
-    {
-        if (@class is ClassEnum cls)
-        {
-            ProcessClass(filename, referenceContent, cls);
-        }
-        else
-        {
-            ProcessPrimitive(filename, oldContent, newContent, referenceContent);
-        }
-    }
-    protected abstract void ProcessPrimitive(string filename, JsonNode? oldContent, JsonNode newContent, JsonNode referenceContent);
-    protected abstract void ProcessClass(string filename, JsonNode referenceContent, ClassEnum @class);
+    protected const string Language = "es-ES";
 
-    protected readonly string NewFolder;
-    protected readonly string OldFolder;
-
-    protected static string[] GetBaseFileNames(string folder)
+    public virtual void Process()
     {
-        var files = new HashSet<string>(Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Select(PathHelper.GetFileNameWithoutExtension));
-        return [.. files];
+        foreach (string file in GetBaseLanguageFileNames(folder, Language))
+        {
+            var (context, header) = ProcessFile(file);
+            OnFileProcessed((file, ProcessType(context, header)));
+        }
+        OnAllFileProcessed();
     }
+
+    protected abstract (T, JsonNode?) ProcessFile(string file);
+    private JsonNode ProcessType(T context, JsonNode? header)
+    {
+        return JsonHelper.IsClass(header!.AsArray(), out string? type) && type is not null
+            ? ProcessClass(context, type)
+            : ProcessPrimitive(context);
+    }
+    protected abstract JsonNode ProcessPrimitive(T context);
+    protected abstract JsonNode ProcessClass(T context, string type);
+
+    public event EventHandler<(string file, JsonNode content)>? FileProcessed;
+
+    public event EventHandler? AllFileProcessed;
+
+    protected virtual void OnFileProcessed((string file, JsonNode content) e)
+    {
+        FileProcessed?.Invoke(this, e);
+    }
+
+    protected virtual void OnAllFileProcessed()
+    {
+        AllFileProcessed?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected string Folder => folder;
 }
 

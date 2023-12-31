@@ -1,13 +1,10 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace StardewValley.Translation.SourceGenerator;
 internal class ParentClass
 {
-    public ParentClass(string keyword, string name, string constraints, ParentClass child)
+    private ParentClass(string keyword, string name, string constraints, ParentClass child)
     {
         Child = child;
         Keyword = keyword;
@@ -15,7 +12,7 @@ internal class ParentClass
         Constraints = constraints;
     }
 
-    public ParentClass Child { get; }
+    public ParentClass? Child { get; }
     public string Keyword { get; }
     public string Name { get; }
     public string Constraints { get; }
@@ -23,8 +20,8 @@ internal class ParentClass
     public static ParentClass GetParentClasses(BaseTypeDeclarationSyntax typeSyntax)
     {
         // Try and get the parent syntax. If it isn't a type like class/struct, this will be null
-        TypeDeclarationSyntax parentSyntax = typeSyntax as TypeDeclarationSyntax;
-        ParentClass parentClassInfo = null;
+        var parentSyntax = (TypeDeclarationSyntax)typeSyntax;
+        ParentClass parentClassInfo = null!;
 
         // Keep looping while we're in a supported nested type
         while (parentSyntax != null && IsAllowedKind(parentSyntax.Kind()))
@@ -42,12 +39,9 @@ internal class ParentClass
 
         // return a link to the outermost parent type
         return parentClassInfo;
-
     }
 
     // We can only be nested in class/struct/record
-    static bool IsAllowedKind(SyntaxKind kind) =>
-        kind == SyntaxKind.ClassDeclaration ||
-        kind == SyntaxKind.StructDeclaration ||
-        kind == SyntaxKind.RecordDeclaration;
+    private static bool IsAllowedKind(SyntaxKind kind) =>
+        kind is SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordDeclaration;
 }
