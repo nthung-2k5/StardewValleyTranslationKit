@@ -1,25 +1,28 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass;
 
-public abstract class BaseJsonClass
+public interface IJsonClass
 {
-    public abstract void Read(JsonNode node);
-    public abstract JsonNode Write(JsonNode node);
-    protected static readonly JsonSerializerOptions WithFieldSerializerOptions = new() { IncludeFields = true };
+    JsonNode Apply(JsonNode node);
+    JsonNode JsonContent { set; }
 }
 
-public abstract class BaseJsonClass<T> : BaseJsonClass where T : class
+public abstract class BaseJsonClass<T> : IJsonClass where T : class
 {
-    public override void Read(JsonNode node) => Read(node.Deserialize<T>(WithFieldSerializerOptions)!);
-    public abstract void Read(T data);
-    public override JsonNode Write(JsonNode node)
+    protected abstract void Read(T data);
+    private static JsonTypeInfo<T> Context => (JsonTypeInfo<T>)JsonSourceGenerationContext.Default.GetTypeInfo(typeof(T))!;
+    public JsonNode JsonContent { set => Content = value.Deserialize(Context)!; }
+    public T Content { set => Read(value); }
+    public JsonNode Apply(JsonNode node)
     {
-        var deserialized = node.Deserialize<T>(WithFieldSerializerOptions)!;
-        Write(ref deserialized);
-        return JsonSerializer.SerializeToNode(deserialized, WithFieldSerializerOptions)!;
+        var deserialized = node.Deserialize(Context)!;
+        Apply(deserialized);
+        return JsonSerializer.SerializeToNode(deserialized, Context)!;
     }
-    public abstract void Write(ref T data);
+
+    public abstract void Apply(T data);
 }

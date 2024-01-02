@@ -10,17 +10,14 @@
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"/>
+<!--    <ProjectReference Include="..\StardewValley.Translation.SourceGenerator\StardewValley.Translation.SourceGenerator.csproj"-->
+<!--                      OutputItemType="Analyzer"-->
+<!--                      ReferenceOutputAssembly="false"/>-->
   </ItemGroup>
   <ItemGroup>
     <Reference Include="StardewValley.GameData">
       <HintPath>..\..\..\TeraBoxDownload\Stardew Valley\StardewValley.GameData.dll</HintPath>
     </Reference>
     <AdditionalFiles Include="test.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ScriptMessage.cs" />
   </ItemGroup>
 </Project>
