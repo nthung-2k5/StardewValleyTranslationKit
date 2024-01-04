@@ -94,8 +94,8 @@ public static partial class JsonHelper
         {
             if (node.GetValueKind() == JsonValueKind.Object)
             {
-                //get real prop name (convert "['prop']" to "prop") and unescape it (compatibility to Newtonsoft.Json)
-                node.AsObject().Add(Regex.Unescape(pathPart[2..^2]), token);
+                //get real prop name (convert "['prop']" to "prop")
+                node.AsObject().Add(pathPart[2..^2], token);
             }
             else if (node.GetValueKind() == JsonValueKind.Array)
             {
