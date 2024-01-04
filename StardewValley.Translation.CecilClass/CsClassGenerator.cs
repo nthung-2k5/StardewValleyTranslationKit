@@ -15,26 +15,28 @@ public enum Type
     List = 4,
     Custom = 8
 }
+
 public class CsClassGenerator(string className, TypeDefinition baseType)
 {
     private const string Namespace = "StardewValley.Translation.JsonClass";
     private const string BaseParam = "content";
 
-    private readonly List<(Property, Type, string)> properties = [];
-
     private readonly ClassModel jsonClass = new(className)
     {
         BaseClass = $"BaseJsonClass<{baseType.Name}>"
     };
-    
+
+    private readonly List<(Property, Type)> properties = [];
+
     public void Property(FieldDefinition field, bool script, string replaceType)
     {
-        var type = GetFieldType(field, script);
+        Type type = GetFieldType(field, script);
         bool optional = IsOptional(field.CustomAttributes);
 
-        var (typename, trueType) = GetTypeName(field, type, replaceType);
+        StringBuilder typename = GetTypeName(field, type, replaceType);
 
         AttributeModel jsonIgnore = null;
+
         if (optional)
         {
             typename.Append('?');
@@ -42,36 +44,32 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
             {
                 SingleParameter = new Parameter($"{nameof(JsonIgnoreAttribute.Condition)} = {nameof(JsonIgnoreCondition)}.{nameof(JsonIgnoreCondition.WhenWritingNull)}")
             };
-            
         }
 
         var prop = new Property(typename.ToString(), field.Name);
+
         if (optional)
         {
             prop.AddAttribute(jsonIgnore);
         }
 
-        properties.Add((prop, type, replaceType != null ? trueType : null));
+        properties.Add((prop, type));
     }
 
     public void Finish(CsGenerator gen)
     {
-        // jsonClass.Properties.Add(new Property($"JsonTypeInfo<{baseType.Name}>", "Context")
-        // {
-        //     AccessModifier = AccessModifier.Protected,
-        //     SingleKeyWord = KeyWord.Override,
-        //     IsAutoImplemented = false,
-        //     IsGetOnly = true,
-        //     GetterBody = $"JsonSourceGenerationContext.Default.{baseType.Name}"
-        // });
         jsonClass.Properties.AddRange(properties.Select(prop => prop.Item1));
         GenerateRead();
         GenerateInverseApply();
-        
+
         gen.Files.Add(new FileModel(jsonClass.Name)
         {
             Namespace = Namespace,
-            UsingDirectives = ["System;", "System.Collections.Generic;", "StardewValley.GameData.Movies;", "System.Text.Json.Serialization;", "System.Text.Json.Serialization.Metadata;"],
+            UsingDirectives =
+            [
+                "System;", "System.Collections.Generic;", "StardewValley.GameData.Movies;",
+                "System.Text.Json.Serialization;", "System.Text.Json.Serialization.Metadata;"
+            ],
             Classes = [jsonClass]
         });
     }
@@ -83,29 +81,31 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
             AccessModifier = AccessModifier.Protected,
             SingleKeyWord = KeyWord.Override,
             Parameters = [new Parameter(baseType.Name, BaseParam)],
-            BodyLines = properties.Select(prop => CreateStatement(prop.Item1, prop.Item2, prop.Item3, false))
+            BodyLines = properties.Select(prop => CreateStatement(prop.Item1, prop.Item2, false))
                                   .SelectMany(s => s).ToList()
         };
         jsonClass.Methods.Add(ctor);
     }
-    
+
     private void GenerateInverseApply()
     {
         var apply = new Method(BuiltInDataType.Void, "Apply")
         {
             SingleKeyWord = KeyWord.Override,
             Parameters = [new Parameter(baseType.Name, BaseParam)],
-            BodyLines = properties.Select(prop => CreateStatement(prop.Item1, prop.Item2, prop.Item3, true))
+            BodyLines = properties.Select(prop => CreateStatement(prop.Item1, prop.Item2, true))
                                   .SelectMany(s => s).ToList()
         };
         jsonClass.Methods.Add(apply);
     }
-    private static string[] CreateStatement(Property property, Type type, string replaceType, bool inverse)
+
+    private static string[] CreateStatement(Property property, Type type, bool inverse)
     {
         StringWriter innerWriter = new();
         IndentedTextWriter writer = new(innerWriter);
-        
+
         StatementCreator creator;
+
         if (type.HasFlag(Type.Script))
         {
             creator = ScriptAssignmentSyntax;
@@ -124,32 +124,38 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
         }
 
         creator(property, $"{BaseParam}.{property.Name}", inverse, writer);
+
         return innerWriter.ToString().Split(writer.NewLine, StringSplitOptions.RemoveEmptyEntries);
     }
+
     private static void SimpleAssignmentSyntax(Property property, string baseProperty, bool inverse, IndentedTextWriter writer)
     {
         (string lhs, string rhs) = (property.Name, baseProperty);
-        
+
         if (inverse)
         {
             (lhs, rhs) = (rhs, lhs);
         }
-        
+
         writer.WriteLine($"{lhs} = {rhs};");
     }
-    private static void SimpleApplySyntax(Property property, string baseProperty, bool inverse, IndentedTextWriter writer)
+
+    private static void SimpleApplySyntax(Property property, string baseProperty, bool inverse,
+                                          IndentedTextWriter writer)
     {
         // if (data.SpecialResponses is not null)
         // {
         //     SpecialResponses = new JsonSpecialResponses { Content = data.SpecialResponses };
         // }
-        
+
         // SpecialResponses?.Apply(data.SpecialResponses);
-        
+
         bool nullable = property.CustomDataType.Contains('?');
+
         if (!inverse)
         {
             string assign = $"{property.Name} = new {(nullable ? property.CustomDataType[..^1] : property.CustomDataType)} {{ Content = {baseProperty} }};";
+
             if (nullable)
             {
                 writer.WriteLine($"if ({baseProperty} is not null)");
@@ -163,23 +169,25 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
             {
                 writer.WriteLine(assign);
             }
-            
         }
         else
         {
             InvocationBasedOnNullable(writer, nullable, property.Name, "Apply", baseProperty);
         }
     }
-    private static void ListAssignmentSyntax(Property property, string baseProperty, bool inverse, IndentedTextWriter writer)
+
+    private static void ListAssignmentSyntax(Property property, string baseProperty, bool inverse,
+                                             IndentedTextWriter writer)
     {
         // Scenes = data.Scenes.ConvertAll(scene => new JsonMovieScene { Content = scene });
-        
+
         // int i = 0;
         // data.Scenes.ForEach(scene => Scenes[i++].Apply(scene));
         bool nullable = property.CustomDataType.Contains('?');
-        
+
         string type = property.CustomDataType["List<".Length..property.CustomDataType.LastIndexOf('>')];
         string lambdaArg = property.Name[..^1].ToLower();
+
         if (!inverse)
         {
             writer.Write($"{property.Name} = ");
@@ -191,14 +199,15 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
             InvocationBasedOnNullable(writer, nullable, baseProperty, nameof(List<object>.ForEach), $"{lambdaArg} => {property.Name}[i++].Apply({lambdaArg})");
         }
     }
+
     private static void ScriptAssignmentSyntax(Property property, string baseProperty, bool inverse, IndentedTextWriter writer)
     {
         // Script = Script.From(data.Script);
-        
+
         // Script?.Apply(ref data.Script);
-        
+
         bool nullable = property.CustomDataType.Contains('?');
-        
+
         if (!inverse)
         {
             writer.WriteLine($"{property.Name} = Script.From({baseProperty});");
@@ -207,33 +216,33 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
         {
             InvocationBasedOnNullable(writer, nullable, property.Name, "Apply", $"ref {baseProperty}");
         }
-        
     }
+
     private static void InvocationBasedOnNullable(IndentedTextWriter writer, bool nullable, string property, string method, params string[] args)
     {
         writer.Write(property);
-        if (nullable) 
+
+        if (nullable)
         {
             writer.Write('?');
         }
 
         writer.Write($".{method}({string.Join(", ", args)});");
     }
-    
+
     private static bool IsOptional(IEnumerable<CustomAttribute> attr)
     {
-        var first = attr.FirstOrDefault(attribute => attribute.AttributeType.FullName == "Microsoft.Xna.Framework.Content.ContentSerializerAttribute" &&
-                                                     attribute.Properties.Any(arg => arg.Name == "Optional" && (bool)arg.Argument.Value));
-        
+        CustomAttribute first = attr.FirstOrDefault(attribute => attribute.AttributeType.FullName == "Microsoft.Xna.Framework.Content.ContentSerializerAttribute" &&
+                                                                 attribute.Properties.Any(arg => arg.Name == "Optional" && (bool)arg.Argument.Value));
+
         return first is not null;
     }
-
-    private delegate void StatementCreator(Property property, string baseProperty, bool inverse, IndentedTextWriter writer);
 
     private static Type GetFieldType(FieldReference field, bool script)
     {
         string type = field.FieldType.FullName;
         Type res = 0;
+
         if (script)
         {
             res |= Type.Script;
@@ -246,7 +255,6 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
         {
             res = Type.Custom;
         }
-        
 
         if (type.Contains("System.Collections.Generic.List"))
         {
@@ -255,10 +263,11 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
 
         return res;
     }
-    private static (StringBuilder, string) GetTypeName(FieldReference field, Type type, string replaceType)
+
+    private static StringBuilder GetTypeName(FieldReference field, Type type, string replaceType)
     {
         StringBuilder typename = new();
-        string trueType;
+
         if (type.HasFlag(Type.List))
         {
             typename.Append("List<");
@@ -266,25 +275,24 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
 
         if (type.HasFlag(Type.String))
         {
-            typename.Append(trueType = "string");
+            typename.Append("string");
         }
         else if (type.HasFlag(Type.Script))
         {
-            typename.Append(trueType = "Script");
+            typename.Append("Script");
         }
         else
         {
-            trueType = type.HasFlag(Type.List)
-                ? ((GenericInstanceType)field.FieldType).GenericArguments[0].Name
-                : field.FieldType.Name;
-            typename.Append(replaceType ?? trueType);
+            typename.Append(replaceType ?? (type.HasFlag(Type.List) ? ((GenericInstanceType)field.FieldType).GenericArguments[0].Name : field.FieldType.Name));
         }
-        
+
         if (type.HasFlag(Type.List))
         {
             typename.Append('>');
         }
 
-        return (typename, trueType);
+        return typename;
     }
+
+    private delegate void StatementCreator(Property property, string baseProperty, bool inverse, IndentedTextWriter writer);
 }

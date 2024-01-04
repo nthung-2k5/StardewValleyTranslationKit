@@ -18,6 +18,5 @@
     <Reference Include="StardewValley.GameData">
       <HintPath>..\..\..\TeraBoxDownload\Stardew Valley\StardewValley.GameData.dll</HintPath>
     </Reference>
-    <AdditionalFiles Include="test.json" />
   </ItemGroup>
 </Project>

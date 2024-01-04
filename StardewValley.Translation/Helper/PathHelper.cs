@@ -10,8 +10,9 @@ public static class PathHelper
         {
             return path;
         }
-        
+
         int dot = pos;
+
         while (pos >= 0)
         {
             if (path[pos] == '.')
@@ -21,7 +22,8 @@ public static class PathHelper
             else if (path[pos] == Path.DirectorySeparatorChar || path[pos] == Path.AltDirectorySeparatorChar)
             {
                 break;
-            }    
+            }
+
             pos--;
         }
 

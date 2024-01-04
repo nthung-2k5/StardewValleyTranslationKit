@@ -1,12 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using CsvHelper;
 using Json.Path;
-using Newtonsoft.Json.Linq;
 using StardewValley.Translation.Helper;
 
 namespace StardewValley.Translation.Formats;
-public partial class CsvFormat(params LanguageContext[] contexts): BaseFormat, ICsvFormat
+
+public partial class CsvFormat(params LanguageContext[] contexts) : BaseFormat, ICsvFormat
 {
     public List<TranslationLine> Lines { get; } = [];
 
@@ -31,7 +33,7 @@ public partial class CsvFormat(params LanguageContext[] contexts): BaseFormat, I
         //     using var writer = new CsvWriter(new StreamWriter(file), System.Globalization.CultureInfo.InvariantCulture);
         //     writer.WriteRecords(dataLines.Skip(DataThreshold * i).Take(DataThreshold));
         // }
-        using var writer = new CsvWriter(new StreamWriter(stream), System.Globalization.CultureInfo.InvariantCulture);
+        using var writer = new CsvWriter(new StreamWriter(stream), CultureInfo.InvariantCulture);
         writer.WriteRecords(Lines);
     }
 
@@ -43,26 +45,32 @@ public partial class CsvFormat(params LanguageContext[] contexts): BaseFormat, I
         //     using var reader = new CsvReader(new StreamReader(file), System.Globalization.CultureInfo.InvariantCulture);
         //     Lines.AddRange(reader.GetRecords<TranslationLine>());
         // }
-        using var reader = new CsvReader(new StreamReader(stream), System.Globalization.CultureInfo.InvariantCulture);
+        using var reader = new CsvReader(new StreamReader(stream), CultureInfo.InvariantCulture);
         Lines.AddRange(reader.GetRecords<TranslationLine>());
         ToJson();
     }
 
     private void ToCsv()
     {
-        var allPath = JsonPath.Parse("$..*");
-        var nodes = allPath.Evaluate(Content).Matches!;
-        foreach (var node in nodes)
+        JsonPath allPath = JsonPath.Parse("$..*");
+        NodeList nodes = allPath.Evaluate(Content).Matches!;
+
+        foreach (Node node in nodes)
         {
-            var value = node.Value!;
-            if (node.Value!.GetValueKind() != JsonValueKind.String) continue;
-            
+            JsonNode value = node.Value!;
+
+            if (node.Value!.GetValueKind() != JsonValueKind.String)
+            {
+                continue;
+            }
+
             IEnumerable<string> contextStrings = from context in contexts
                                                  let contextNode = context.Context.SelectToken(node.Location)
                                                  where contextNode is not null
                                                  select $"{context.Language}: {contextNode.GetValue<string>()}";
-            
-            Lines.Add(new TranslationLine(value.GetPath(), value.GetValue<string>(), string.Join('\n', contextStrings)));
+
+            Lines.Add(new TranslationLine(value.GetPath()[1..].Replace("\\", @"\\"), value.GetValue<string>(),
+                                          string.Join('\n', contextStrings)));
         }
         // var newtonsoftJson = JToken.Parse(Content!.ToJsonString());
         // var reader = new JTokenReader(newtonsoftJson);
@@ -83,15 +91,16 @@ public partial class CsvFormat(params LanguageContext[] contexts): BaseFormat, I
 
     private void ToJson()
     {
-        Content = Lines[0].Key[0] == '[' && char.IsDigit(Lines[0].Key[1]) ? new JsonArray() : new JsonObject();
-        foreach (var line in Lines)
+        foreach (TranslationLine line in Lines)
         {
-            Content.AddTokenByPath(line.Key, line.GetTranslation());
-        }    
+            Content.AddTokenByPath("$" + line.Key.Replace(@"\\", "\\"), line.GetTranslation());
+        }
     }
 }
+
 public record TranslationLine(string Key, string Text, string Context, string Translated = "")
 {
     public string GetTranslation() => !string.IsNullOrEmpty(Translated) ? Translated : Text;
 }
+
 public record LanguageContext(string Language, JsonObject Context);

@@ -8,14 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="test.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Include="class.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CsCodeGenerator" Version="2.0.0" />
-      <PackageReference Include="Mono.Cecil" Version="0.11.5" />
-      <PackageReference Include="System.Text.Json" Version="8.0.0" />
+        <PackageReference Include="CsCodeGenerator" Version="2.0.0"/>
+        <PackageReference Include="Mono.Cecil" Version="0.11.5"/>
+        <PackageReference Include="System.Text.Json" Version="8.0.0"/>
     </ItemGroup>
 </Project>

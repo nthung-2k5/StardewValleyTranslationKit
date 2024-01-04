@@ -1,28 +1,38 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using StardewValley.Translation.Formats;
 using StardewValley.Translation.Process;
 
-var trans = new ExtractTranslation(args[0], args[1], new JsonFormat(), fullExport: true);
-trans.Process();
-//Console.WriteLine("Hello world");
-//var files = from file in Directory.GetFiles(GlobalPath.NewVersion, "*.es-ES.json", SearchOption.AllDirectories)
-//            select Path.GetRelativePath(GlobalPath.NewVersion, file.Replace(".es-ES.json", null));
+(string Old, string New) folder = (args[1], args[2]);
+IFormat format = args[3] switch
+                    {
+                        "json" => new JsonFormat(),
+                        "csv" => new CsvFormat(),
+                        _ => throw new ArgumentException()
+                    };
+string? export = null;
 
-// export
-//var jp = new NewContentTranslator(args[0], args[1], false, false);
-//jp.Export("ja-JP");
+if (args.Length > 3)
+{
+    export = args[3];
+}
+IProcess process;
+switch (args[0])
+{
+    case "import":
+    case "-i":
+        process = new StardewUpdate(folder.Old, folder.New, format, export);
+        break;
+    case "extract":
+    case "-e":
+        process = new ExtractTranslation(folder.Old, folder.New, format, fullExport: true, exportFolder: export);
+        break;
+    case "sync":
+    case "-s":
+        process = new SyncToNewVersion(folder.Old, folder.New, export);
+        break;
+    default:
+        throw new NotImplementedException();
+}
 
-//var chingchong = new NewContentTranslator(args[0], args[1], false, false);
-//chingchong.Export("zh-CN");
-
-//var eng = new NewContentTranslator(args[0], args[1], true, true, (folder, json) => new CsvFormat(folder, json, new("Japanese", jp.LogJson), new("Chinese", chingchong.LogJson)));
-//eng.Export();
-
-//var import = new StardewUpdate(args[0], args[0] + "_test")
-//{
-//    GetImportFormat = (folder) => new CsvFormat(folder, new())
-//};
-//import.Import();
+process.Process();
