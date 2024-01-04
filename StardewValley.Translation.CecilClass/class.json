@@ -1,0 +1,70 @@
+﻿{
+    "JsonConcessionItemData": {
+        "BaseClass": "StardewValley.GameData.Movies.ConcessionItemData",
+        "Mapping": [
+            "DisplayName",
+            "Description"
+        ],
+        "Script": [],
+        "TopClass": true
+    },
+    "JsonMovieData": {
+        "BaseClass": "StardewValley.GameData.Movies.MovieData",
+        "Mapping": [
+            "Title",
+            "Description",
+            "Scenes"
+        ],
+        "Script": [],
+        "TopClass": true
+    },
+    "JsonMovieScene": {
+        "BaseClass": "StardewValley.GameData.Movies.MovieScene",
+        "Mapping": [
+            "Text",
+            "Script"
+        ],
+        "Script": [
+            "Script"
+        ],
+        "TopClass": false
+    },
+    "JsonCharacterResponse": {
+        "BaseClass": "StardewValley.GameData.Movies.CharacterResponse",
+        "Mapping": [
+            "Text",
+            "Script"
+        ],
+        "Script": [
+            "Script"
+        ],
+        "TopClass": false
+    },
+    "JsonMovieCharacterReaction": {
+        "BaseClass": "StardewValley.GameData.Movies.MovieCharacterReaction",
+        "Mapping": [
+            "NPCName",
+            "Reactions"
+        ],
+        "Script": [],
+        "TopClass": true
+    },
+    "JsonMovieReaction": {
+        "BaseClass": "StardewValley.GameData.Movies.MovieReaction",
+        "Mapping": [
+            "SpecialResponses"
+        ],
+        "Script": [],
+        "TopClass": false
+    },
+    "JsonSpecialResponses": {
+        "BaseClass": "StardewValley.GameData.Movies.SpecialResponses",
+        "Mapping": [
+            "BeforeMovie",
+            "DuringMovie",
+            "AfterMovie"
+        ],
+        "Script": [],
+        "TopClass": false
+    }
+}
