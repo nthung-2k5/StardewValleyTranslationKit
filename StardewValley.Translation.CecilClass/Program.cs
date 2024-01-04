@@ -41,6 +41,6 @@ File.WriteAllText(Path.Combine(args[1], "ClassTranslation.g.cs"), SourceCodeHelp
 var allTypes = classes.SelectMany(static cls => new[] { cls.Key, cls.Value.BaseClass }).ToList();
 allTypes.Sort();
 
-File.WriteAllText(Path.Combine(args[1], "JsonSourceGenerationContext.cs"), SourceCodeHelper.JsonSourceGenerator(allTypes));
+File.WriteAllText(Path.Combine(args[1], "JsonSourceGenerationContext.g.cs"), SourceCodeHelper.JsonSourceGenerator(allTypes));
 
 gen.CreateFiles();

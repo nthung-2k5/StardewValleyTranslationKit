@@ -63,7 +63,7 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
         GenerateRead();
         GenerateInverseApply();
 
-        gen.Files.Add(new FileModel(jsonClass.Name)
+        gen.Files.Add(new FileModel(jsonClass.Name + ".g")
         {
             Namespace = Namespace,
             UsingDirectives =
