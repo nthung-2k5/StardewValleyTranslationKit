@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Profile 1": {
-      "commandName": "DebugRoslynComponent",
-      "targetProject": "../StardewValley.Translation.JsonClass/StardewValley.Translation.JsonClass.csproj"
-    }
-  }
-}
