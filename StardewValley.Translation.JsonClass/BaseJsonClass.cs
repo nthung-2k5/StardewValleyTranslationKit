@@ -5,13 +5,13 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass;
 
-public interface IJsonClass
+internal interface IJsonClass
 {
     JsonNode Apply(JsonNode node);
     JsonNode JsonContent { set; }
 }
 
-public abstract class BaseJsonClass<T> : IJsonClass where T : class
+internal abstract class BaseJsonClass<T> : IJsonClass where T : class
 {
     protected abstract void Read(T data);
     private static JsonTypeInfo<T> Context => (JsonTypeInfo<T>)JsonSourceGenerationContext.Default.GetTypeInfo(typeof(T))!;
@@ -19,7 +19,7 @@ public abstract class BaseJsonClass<T> : IJsonClass where T : class
     public T Content { set => Read(value); }
     public JsonNode Apply(JsonNode node)
     {
-        var deserialized = node.Deserialize(Context)!;
+        T deserialized = node.Deserialize(Context)!;
         Apply(deserialized);
         return JsonSerializer.SerializeToNode(deserialized, Context)!;
     }

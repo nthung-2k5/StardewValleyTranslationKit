@@ -23,7 +23,8 @@ public class CsClassGenerator(string className, TypeDefinition baseType)
 
     private readonly ClassModel jsonClass = new(className)
     {
-        BaseClass = $"BaseJsonClass<{baseType.Name}>"
+        BaseClass = $"BaseJsonClass<{baseType.Name}>",
+        AccessModifier = AccessModifier.Internal
     };
 
     private readonly List<(Property, Type)> properties = [];

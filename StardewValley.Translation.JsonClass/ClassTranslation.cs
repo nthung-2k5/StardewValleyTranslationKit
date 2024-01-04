@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 namespace StardewValley.Translation.JsonClass;
 
 public static partial class ClassTranslation
@@ -11,7 +10,7 @@ public static partial class ClassTranslation
         {
             JsonValueKind.Object => ConvertObject<T>(node.AsObject()),
             JsonValueKind.Array => ConvertArray<T>(node.AsArray()),
-            _ => throw new NotImplementedException()
+            _ => throw new ArgumentOutOfRangeException(node.GetValueKind() + "is not a JSON container")
         };
     }
 
@@ -54,7 +53,7 @@ public static partial class ClassTranslation
             case JsonValueKind.False:
             case JsonValueKind.Null:
             default:
-                throw new NotImplementedException();
+                throw new ArgumentOutOfRangeException(node.GetValueKind() + "is not a JSON container");
         }
     }
 

@@ -46,7 +46,6 @@ public class StardewUpdate(string folder, string transPath, IFormat format, stri
         var exporter = new JsonFormat { Content = e.content.Parent!.AsObject() };
         
         string file = Path.Combine(ExportFolder, $"{e.file}.{Language}.json");
-        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
         exporter.Export(file);
     }
 

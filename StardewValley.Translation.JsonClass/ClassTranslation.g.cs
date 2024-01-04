@@ -12,7 +12,7 @@ public static partial class ClassTranslation
             "StardewValley.GameData.Movies.ConcessionItemData" => Convert<JsonConcessionItemData>(node),
             "StardewValley.GameData.Movies.MovieData" => Convert<JsonMovieData>(node),
             "StardewValley.GameData.Movies.MovieCharacterReaction" => Convert<JsonMovieCharacterReaction>(node),
-            _ => throw new ArgumentException(nameof(type))
+            _ => throw new NotSupportedException(nameof(type) + "is not supported")
         };
     }
     
@@ -30,7 +30,7 @@ public static partial class ClassTranslation
                 Apply<JsonMovieCharacterReaction>(node, translation);
                 break;
             default:
-                throw new ArgumentException(nameof(type));
+                throw new NotSupportedException(nameof(type) + "is not supported");
         }
     }
 }

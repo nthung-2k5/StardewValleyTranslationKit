@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass
 {
-    public class JsonMovieData : BaseJsonClass<MovieData>
+    internal class JsonMovieData : BaseJsonClass<MovieData>
     {
         public string Title { get; set; }
 

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass
 {
-    public class JsonCharacterResponse : BaseJsonClass<CharacterResponse>
+    internal class JsonCharacterResponse : BaseJsonClass<CharacterResponse>
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Text { get; set; }

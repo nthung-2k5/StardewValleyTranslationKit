@@ -17,11 +17,11 @@ public abstract class BaseProcess<T>(string folder, string? exportFolder): IProc
 
     public virtual void Process()
     {
-        foreach (string file in GetBaseLanguageFileNames(folder, Language))
+        Parallel.ForEach(GetBaseLanguageFileNames(folder, Language), (file, _, _) =>
         {
             (T context, JsonNode? header) = ProcessFile(file);
             OnFileProcessed((file, ProcessType(context, header)));
-        }
+        });
 
         OnAllFileProcessed();
     }

@@ -15,24 +15,6 @@ public partial class CsvFormat(params LanguageContext[] contexts) : BaseFormat, 
     protected override void Export(FileStream stream)
     {
         ToCsv();
-        // string[] types = ["dialogue", "strings"];
-        // foreach (string type in types)
-        // {
-        //     using var file = File.Create(Path.Combine(path, $"{type}.new.csv"));
-        //     using var writer = new CsvWriter(new StreamWriter(file), System.Globalization.CultureInfo.InvariantCulture);
-        //
-        //     var lines = Lines.Where(line => line.Key.Contains(type));
-        //     writer.WriteRecords(lines);
-        // }
-        //
-        // const int DataThreshold = 1000;
-        // var dataLines = Lines.Where(line => line.Key.Contains("data")).ToArray();
-        // for (int i = 0; i < dataLines.Length / DataThreshold + (dataLines.Length % DataThreshold != 0 ? 1 : 0); i++)
-        // {
-        //     using var file = File.Create(Path.Combine(path, $"data{(i > 0 ? $"({i})" : string.Empty)}.new.csv"));
-        //     using var writer = new CsvWriter(new StreamWriter(file), System.Globalization.CultureInfo.InvariantCulture);
-        //     writer.WriteRecords(dataLines.Skip(DataThreshold * i).Take(DataThreshold));
-        // }
         using var writer = new CsvWriter(new StreamWriter(stream), CultureInfo.InvariantCulture);
         writer.WriteRecords(Lines);
     }

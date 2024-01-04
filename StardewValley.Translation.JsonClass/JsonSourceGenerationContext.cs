@@ -4,18 +4,18 @@ using System.Text.Json.Serialization;
 namespace StardewValley.Translation.JsonClass;
 
 [JsonSourceGenerationOptions(IncludeFields = true)]
-[JsonSerializable(typeof(JsonConcessionItemData))]
-[JsonSerializable(typeof(JsonMovieData))]
-[JsonSerializable(typeof(JsonMovieScene))]
 [JsonSerializable(typeof(JsonCharacterResponse))]
+[JsonSerializable(typeof(JsonConcessionItemData))]
 [JsonSerializable(typeof(JsonMovieCharacterReaction))]
+[JsonSerializable(typeof(JsonMovieData))]
 [JsonSerializable(typeof(JsonMovieReaction))]
+[JsonSerializable(typeof(JsonMovieScene))]
 [JsonSerializable(typeof(JsonSpecialResponses))]
-[JsonSerializable(typeof(ConcessionItemData))]
-[JsonSerializable(typeof(MovieData))]
-[JsonSerializable(typeof(MovieScene))]
 [JsonSerializable(typeof(CharacterResponse))]
+[JsonSerializable(typeof(ConcessionItemData))]
 [JsonSerializable(typeof(MovieCharacterReaction))]
+[JsonSerializable(typeof(MovieData))]
 [JsonSerializable(typeof(MovieReaction))]
+[JsonSerializable(typeof(MovieScene))]
 [JsonSerializable(typeof(SpecialResponses))]
-public partial class JsonSourceGenerationContext: JsonSerializerContext;
+internal partial class JsonSourceGenerationContext: JsonSerializerContext;

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass
 {
-    public class JsonMovieCharacterReaction : BaseJsonClass<MovieCharacterReaction>
+    internal class JsonMovieCharacterReaction : BaseJsonClass<MovieCharacterReaction>
     {
         public string NPCName { get; set; }
 

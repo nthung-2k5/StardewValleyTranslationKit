@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass
 {
-    public class JsonConcessionItemData : BaseJsonClass<ConcessionItemData>
+    internal class JsonConcessionItemData : BaseJsonClass<ConcessionItemData>
     {
         public string DisplayName { get; set; }
 

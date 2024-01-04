@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace StardewValley.Translation.JsonClass
 {
-    public class JsonMovieReaction : BaseJsonClass<MovieReaction>
+    internal class JsonMovieReaction : BaseJsonClass<MovieReaction>
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public JsonSpecialResponses? SpecialResponses { get; set; }

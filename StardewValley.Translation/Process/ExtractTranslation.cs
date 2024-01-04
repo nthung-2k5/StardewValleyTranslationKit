@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Json.Patch;
 using StardewValley.Translation.Formats;
@@ -19,22 +21,12 @@ public class ExtractTranslation(
     bool fullExport = false,
     string? exportFolder = null) : BaseProcess<TranslationContext>(newFolder, exportFolder), IFormatVisitor
 {
-    private readonly JsonObject jsonLog = [];
-
-    // private static void AlertNewText(string filename, string value, string? key = null)
-    // {
-    //     Console.WriteLine("New content found in file: {0}", filename);
-    //     if (key is not null)
-    //     {
-    //         Console.WriteLine("Key: {0}", key);
-    //     }
-    //     Console.WriteLine("Text: {0}", value);
-    //     Console.WriteLine("Writing to log file...");
-    //     Console.WriteLine();
-    // }
+    private readonly ConcurrentDictionary<string, JsonNode> jsonLog = [];
+    private ImmutableSortedDictionary<string, JsonNode>? sortedJsonLog;
+    
     public void VisitIJsonFormat(IJsonFormat element)
     {
-        element.Content = jsonLog;
+        element.Content = JsonSerializer.SerializeToNode(sortedJsonLog)?.AsObject();
         element.Export(Path.Combine(ExportFolder, "content.new.json"));
     }
 
@@ -45,7 +37,7 @@ public class ExtractTranslation(
         foreach (string folder in folders)
         {
             element.Lines.Clear();
-            var obj = jsonLog.Where(kv => kv.Key.Contains(folder));
+            var obj = sortedJsonLog!.Where(kv => kv.Key.Contains(folder));
             JsonObject folderObj = JsonSerializer.SerializeToNode(obj.ToDictionary(kv => kv.Key, kv => kv.Value))!.AsObject();
             element.Content = folderObj;
             element.Export(Path.Combine(ExportFolder, $"{folder}.new.csv"));
@@ -103,6 +95,7 @@ public class ExtractTranslation(
     protected override void OnAllFileProcessed()
     {
         base.OnAllFileProcessed();
+        sortedJsonLog = jsonLog.ToImmutableSortedDictionary();
         format?.Accept(this);
     }
 }

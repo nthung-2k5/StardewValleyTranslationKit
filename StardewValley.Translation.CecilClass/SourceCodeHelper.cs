@@ -16,7 +16,7 @@ public static partial class ClassTranslation
         return type switch
         {
             {{string.Join(NewLine(',', 3), types.Select(type => $"\"{type.BaseType}\" => Convert<{type.Type}>(node)"))}},
-            _ => throw new ArgumentException(nameof(type))
+            _ => throw new NotSupportedException(nameof(type) + "is not supported")
         };
     }
     
@@ -26,7 +26,7 @@ public static partial class ClassTranslation
         {
             {{string.Join(NewLine(';', 3), types.Select(type => $"case \"{type.BaseType}\":" + NewLine(4) + $"Apply<{type.Type}>(node, translation)" + NewLine(';', 4) + "break"))}};
             default:
-                throw new ArgumentException(nameof(type));
+                throw new NotSupportedException(nameof(type) + "is not supported");
         }
     }
 }
@@ -40,7 +40,7 @@ namespace StardewValley.Translation.JsonClass;
 
 [JsonSourceGenerationOptions(IncludeFields = true)]
 {string.Join('\n', types.Select(type => $"[JsonSerializable(typeof({type.Split('.')[^1]}))]"))}
-public partial class JsonSourceGenerationContext: JsonSerializerContext;
+internal partial class JsonSourceGenerationContext: JsonSerializerContext;
 """;
 
     private static string NewLine(char newline, int indent) => newline + NewLine(indent);
